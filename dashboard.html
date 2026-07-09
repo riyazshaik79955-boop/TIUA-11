@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard — TIUA</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dashboard.css">
+</head>
+<body class="antialiased min-h-screen relative overflow-x-hidden">
+
+<!-- background blobs -->
+<div class="glow-orb blob-float w-[30rem] h-[30rem] bg-[var(--accent1)] -top-32 -left-32"></div>
+<div class="glow-orb blob-float-slow w-96 h-96 bg-[var(--accent2)] top-1/3 -right-20 opacity-25"></div>
+<div class="glow-orb blob-float w-80 h-80 bg-[var(--gold)] bottom-0 left-1/3 opacity-15"></div>
+
+<div id="page-transition">
+  <div class="flex flex-col items-center gap-4">
+    <div class="w-10 h-10 rounded-full border-2 border-white/15 border-t-[var(--accent2)] animate-spin"></div>
+    <span class="font-display text-sm tracking-[0.3em] text-white/50">SIGNING OUT</span>
+  </div>
+</div>
+
+<div id="sidebar-overlay" class="hidden fixed inset-0 bg-black/60 z-30 lg:hidden"></div>
+
+<!-- ============ SIDEBAR ============ -->
+<aside id="sidebar" class="fixed top-0 left-0 h-full w-72 z-40 -translate-x-full lg:translate-x-0 glass border-r border-white/8 flex flex-col">
+  <div class="flex items-center justify-between px-6 py-6">
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--accent1)] to-[var(--accent2)] flex items-center justify-center font-display font-bold">T</div>
+      <span class="font-display font-semibold text-lg tracking-wide">TIUA</span>
+    </div>
+    <button id="sidebar-close" class="lg:hidden text-white/50 hover:text-white">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+    <a href="#" data-section="overview" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-[var(--muted)] hover:bg-white/5 transition-colors">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+      Dashboard
+    </a>
+    <a href="#" data-section="timetable" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-[var(--muted)] hover:bg-white/5 transition-colors">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Today's Timetable
+    </a>
+    <a href="#" data-section="subjects" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-[var(--muted)] hover:bg-white/5 transition-colors">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>
+      Subjects
+    </a>
+    <a href="#" data-section="questionpapers" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-[var(--muted)] hover:bg-white/5 transition-colors">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 3h9a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8l5-5Z"/><path d="M9 3v5H4"/></svg>
+      Question Papers
+    </a>
+    <a href="#" data-section="calculator" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-[var(--muted)] hover:bg-white/5 transition-colors">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01"/></svg>
+      Internal Calculator
+    </a>
+
+    <div class="pt-4 mt-4 border-t border-white/8 space-y-1">
+      <a href="#" data-section="profile" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-[var(--muted)] hover:bg-white/5 transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+        Profile
+      </a>
+      <a href="#" data-section="settings" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-[var(--muted)] hover:bg-white/5 transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+        Settings
+      </a>
+      <a href="#" data-section="logout" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-[var(--rose)] hover:bg-white/5 transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        Logout
+      </a>
+    </div>
+  </nav>
+
+  <div class="p-4">
+    <div class="glass rounded-2xl p-4 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--accent1)] to-[var(--accent2)] flex items-center justify-center font-display font-semibold text-sm">R</div>
+      <div class="min-w-0">
+        <p id="student-name-badge" class="text-sm font-medium truncate">Riyaz</p>
+        <p id="student-role-badge" class="text-[10px] text-[var(--muted)] truncate">III/IV EIE · Section B</p>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ============ MAIN ============ -->
+<div class="lg:pl-72 relative z-10">
+
+  <!-- topbar -->
+  <header class="sticky top-0 z-20 backdrop-blur-xl bg-[var(--bg)]/70 border-b border-white/8">
+    <div class="flex items-center justify-between gap-4 px-5 sm:px-8 py-4">
+      <div class="flex items-center gap-4 min-w-0">
+        <button id="sidebar-open" class="lg:hidden text-white/70 hover:text-white shrink-0">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <div class="min-w-0">
+          <h1 id="page-title" class="font-display font-semibold text-lg sm:text-xl truncate">Dashboard</h1>
+          <p id="today-date" class="text-xs text-[var(--muted)]"></p>
+        </div>
+      </div>
+      <div class="flex items-center gap-4 shrink-0">
+        <span id="live-clock" class="hidden sm:inline text-xs text-[var(--muted)] font-medium tracking-wide"></span>
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--accent1)] to-[var(--accent2)] flex items-center justify-center font-display font-semibold text-sm">R</div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content" class="px-5 sm:px-8 py-8 max-w-7xl mx-auto">
+
+    <!-- ================= OVERVIEW ================= -->
+    <section id="view-overview">
+      <div class="reveal in mb-10">
+        <h2 id="greeting-text" class="font-display font-semibold text-2xl sm:text-3xl"></h2>
+        <p class="text-sm text-[var(--muted)] mt-2">Here's what's happening in your semester today.</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-12">
+        <div class="reveal in glass card-hover rounded-3xl p-6">
+          <p class="text-xs text-[var(--muted)]">Class</p>
+          <p class="font-display text-xl mt-2">III/IV EIE — B</p>
+          <p class="text-xs text-[var(--muted)] mt-1">Room No. 445</p>
+        </div>
+        <div class="reveal in glass card-hover rounded-3xl p-6">
+          <p class="text-xs text-[var(--muted)]">Semester</p>
+          <p class="font-display text-xl mt-2">V Semester</p>
+          <p class="text-xs text-[var(--muted)] mt-1">AY 2026 – 27</p>
+        </div>
+        <div class="reveal in glass card-hover rounded-3xl p-6">
+          <p class="text-xs text-[var(--muted)]">Subjects</p>
+          <p class="font-display text-xl mt-2">10 active</p>
+          <p class="text-xs text-[var(--muted)] mt-1">Theory + Labs + EPICS</p>
+        </div>
+        <div class="reveal in glass card-hover rounded-3xl p-6">
+          <p class="text-xs text-[var(--muted)]">Effective from</p>
+          <p class="font-display text-xl mt-2">22 Jun 2026</p>
+          <p class="text-xs text-[var(--muted)] mt-1">Current timetable</p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="font-display font-semibold text-lg">Today at a glance — <span id="today-day-label" class="text-[var(--accent2)]"></span></h3>
+        <button data-section-jump="timetable" onclick="goToSection('timetable')" class="text-xs text-[var(--accent2)] hover:underline">View full week →</button>
+      </div>
+      <div id="today-timetable-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-14"></div>
+
+      <h3 class="font-display font-semibold text-lg mb-5">Quick actions</h3>
+      <div class="grid sm:grid-cols-3 gap-5">
+        <button onclick="goToSection('subjects')" class="ripple-btn reveal in glass card-hover rounded-3xl p-6 text-left relative overflow-hidden">
+          <span class="text-2xl mb-3 block">📚</span>
+          <p class="font-display font-medium">Browse subjects</p>
+          <p class="text-xs text-[var(--muted)] mt-1">Notes, PPTs, PDFs & more</p>
+        </button>
+        <button onclick="goToSection('questionpapers')" class="ripple-btn reveal in glass card-hover rounded-3xl p-6 text-left relative overflow-hidden">
+          <span class="text-2xl mb-3 block">📄</span>
+          <p class="font-display font-medium">Question papers</p>
+          <p class="text-xs text-[var(--muted)] mt-1">View previous papers</p>
+        </button>
+        <button onclick="goToSection('calculator')" class="ripple-btn reveal in glass card-hover rounded-3xl p-6 text-left relative overflow-hidden">
+          <span class="text-2xl mb-3 block">🧮</span>
+          <p class="font-display font-medium">Calculate internals</p>
+          <p class="text-xs text-[var(--muted)] mt-1">CT + MID + Assignment</p>
+        </button>
+      </div>
+    </section>
+
+    <!-- ================= TIMETABLE ================= -->
+    <section id="view-timetable" class="hidden">
+      <div class="reveal mb-8">
+        <h2 class="font-display font-semibold text-2xl">Today's Timetable — <span id="today-day-label-2" class="text-[var(--accent2)]"></span></h2>
+        <p class="text-sm text-[var(--muted)] mt-1">Class III/IV EIE · Section B · Room 445</p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-14" id="today-timetable-grid-2"></div>
+
+      <h3 class="reveal font-display font-semibold text-lg mb-5">Full week</h3>
+      <div id="full-week-wrap" class="grid md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+    </section>
+
+    <!-- ================= SUBJECTS ================= -->
+    <section id="view-subjects" class="hidden">
+      <div class="reveal mb-8">
+        <h2 class="font-display font-semibold text-2xl">Subjects</h2>
+        <p class="text-sm text-[var(--muted)] mt-1">Tap a subject to view notes, PDFs, PPTs, DOCX, images and videos — uploaded by your faculty/admin.</p>
+      </div>
+      <div id="subjects-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    </section>
+
+    <!-- ================= QUESTION PAPERS ================= -->
+    <section id="view-questionpapers" class="hidden">
+      <div class="reveal mb-8">
+        <h2 class="font-display font-semibold text-2xl">Question Papers</h2>
+        <p class="text-sm text-[var(--muted)] mt-1">Tap a subject to view previous question papers, right inside TIUA.</p>
+      </div>
+      <div id="qp-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    </section>
+
+    <!-- ================= CALCULATOR ================= -->
+    <section id="view-calculator" class="hidden">
+      <div class="reveal mb-8">
+        <h2 class="font-display font-semibold text-2xl">Internal Marks Calculator</h2>
+        <p class="text-sm text-[var(--muted)] mt-1">Higher CT×0.66 + Lower CT×0.33 + Higher MID×0.66 + Lower MID×0.33 + Assignment = out of 40.</p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8 items-start">
+        <form id="calc-form" class="reveal glass rounded-3xl p-7 space-y-5">
+          <div>
+            <label class="block text-xs text-[var(--muted)] mb-1.5">Subject</label>
+            <select id="calc-subject" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[var(--accent2)] transition-colors">
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-[var(--muted)] mb-1.5">CT 1</label>
+              <input id="calc-ct1" type="number" min="0" step="0.5" placeholder="0" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[var(--accent2)] transition-colors" />
+            </div>
+            <div>
+              <label class="block text-xs text-[var(--muted)] mb-1.5">CT 2</label>
+              <input id="calc-ct2" type="number" min="0" step="0.5" placeholder="0" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[var(--accent2)] transition-colors" />
+            </div>
+            <div>
+              <label class="block text-xs text-[var(--muted)] mb-1.5">MID 1</label>
+              <input id="calc-mid1" type="number" min="0" step="0.5" placeholder="0" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[var(--accent2)] transition-colors" />
+            </div>
+            <div>
+              <label class="block text-xs text-[var(--muted)] mb-1.5">MID 2</label>
+              <input id="calc-mid2" type="number" min="0" step="0.5" placeholder="0" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[var(--accent2)] transition-colors" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs text-[var(--muted)] mb-1.5">Assignment marks</label>
+            <input id="calc-assignment" type="number" min="0" step="0.5" placeholder="0" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[var(--accent2)] transition-colors" />
+          </div>
+
+          <div class="flex gap-3 pt-2">
+            <button type="submit" class="ripple-btn btn-primary flex-1 rounded-xl py-3.5 font-display font-medium text-sm relative overflow-hidden">Calculate</button>
+            <button type="button" id="calc-reset" class="ripple-btn rounded-xl px-5 py-3.5 border border-white/15 text-sm hover:bg-white/5 transition-colors relative overflow-hidden">Reset</button>
+          </div>
+        </form>
+
+        <div id="calc-result-card" class="reveal glass rounded-3xl p-8 hidden">
+          <p class="text-xs text-[var(--muted)] mb-4">Your final internal marks</p>
+          <div class="flex items-center gap-4 mb-5">
+            <span id="calc-result-emoji" class="text-5xl"></span>
+            <div>
+              <p id="calc-result-title" class="font-display font-semibold text-xl"></p>
+              <p id="calc-result-sub" class="text-sm text-[var(--muted)]"></p>
+            </div>
+          </div>
+          <p id="calc-result-score" class="font-display font-bold text-4xl mb-4"></p>
+          <div class="w-full h-2.5 rounded-full bg-white/8 overflow-hidden">
+            <div id="calc-result-bar" class="h-full rounded-full bg-gradient-to-r from-[var(--accent1)] to-[var(--accent2)]" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PROFILE ================= -->
+    <section id="view-profile" class="hidden">
+      <div class="reveal glass rounded-3xl p-8 max-w-xl">
+        <div class="flex items-center gap-5 mb-8">
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--accent1)] to-[var(--accent2)] flex items-center justify-center font-display font-bold text-2xl">R</div>
+          <div>
+            <p id="profile-name" class="font-display font-semibold text-xl"></p>
+            <p id="profile-role" class="text-sm text-[var(--muted)]"></p>
+          </div>
+        </div>
+        <div class="space-y-4 text-sm">
+          <div class="flex justify-between border-b border-white/8 pb-3"><span class="text-[var(--muted)]">Roll number</span><span id="profile-roll"></span></div>
+          <div class="flex justify-between border-b border-white/8 pb-3"><span class="text-[var(--muted)]">Department</span><span>Electronics &amp; Instrumentation Engineering</span></div>
+          <div class="flex justify-between border-b border-white/8 pb-3"><span class="text-[var(--muted)]">Room</span><span>445</span></div>
+          <div class="flex justify-between pb-1"><span class="text-[var(--muted)]">Class counsellors</span><span class="text-right">Dr. D. Srinivas, Dr. S. Kalpana, Mrs. D. Anusha</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SETTINGS ================= -->
+    <section id="view-settings" class="hidden">
+      <div class="reveal glass rounded-3xl p-8 max-w-xl space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="font-medium text-sm">Push notifications</p>
+            <p class="text-xs text-[var(--muted)]">Announcements and timetable changes</p>
+          </div>
+          <input type="checkbox" checked class="w-5 h-5 accent-[var(--accent1)]" />
+        </div>
+        <div class="flex items-center justify-between border-t border-white/8 pt-6">
+          <div>
+            <p class="font-medium text-sm">Email digests</p>
+            <p class="text-xs text-[var(--muted)]">Weekly summary of internals & deadlines</p>
+          </div>
+          <input type="checkbox" class="w-5 h-5 accent-[var(--accent1)]" />
+        </div>
+        <div class="flex items-center justify-between border-t border-white/8 pt-6">
+          <div>
+            <p class="font-medium text-sm">Dark theme</p>
+            <p class="text-xs text-[var(--muted)]">TIUA is designed dark-first</p>
+          </div>
+          <input type="checkbox" checked disabled class="w-5 h-5 accent-[var(--accent1)] opacity-50" />
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============ RESOURCE MODAL (Subjects & Question Papers share this) ============ -->
+<div id="resource-modal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center opacity-0 pointer-events-none bg-black/60 backdrop-blur-sm">
+  <div class="modal-panel scale-95 opacity-0 w-full sm:max-w-2xl glass rounded-t-3xl sm:rounded-3xl p-6 sm:p-8 max-h-[85vh] overflow-y-auto">
+    <div class="flex items-start justify-between mb-5">
+      <div>
+        <h3 id="resource-modal-title" class="font-display font-semibold text-xl"></h3>
+        <p id="resource-modal-sub" class="text-xs text-[var(--muted)] mt-1"></p>
+      </div>
+      <button id="resource-modal-close" class="text-white/50 hover:text-white shrink-0">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div id="resource-modal-tabs" class="flex flex-wrap gap-2 mb-5"></div>
+
+    <div id="resource-file-list" class="space-y-2 mb-2"></div>
+
+    <!-- inline viewer, view-only, no download control -->
+    <div id="resource-viewer" class="hidden mt-5 rounded-2xl overflow-hidden border border-white/10">
+      <div class="flex items-center justify-between px-4 py-2.5 bg-white/5">
+        <span id="resource-viewer-title" class="text-xs text-[var(--muted)] truncate"></span>
+        <button id="resource-viewer-close" class="text-white/50 hover:text-white text-xs">Close</button>
+      </div>
+      <iframe id="resource-viewer-frame" class="w-full h-[50vh] bg-black" sandbox="allow-scripts allow-same-origin"></iframe>
+    </div>
+  </div>
+</div>
+
+<script src="js/timetable.js"></script>
+<script src="js/subjects.js"></script>
+<script src="js/calculator.js"></script>
+<script src="js/dashboard.js"></script>
+<script>
+  // keep the duplicate "today" grid inside the Timetable view in sync with the overview one
+  const _origRender = renderTodayTimetable;
+  renderTodayTimetable = function(){
+    _origRender();
+    const src = document.getElementById('today-timetable-grid');
+    const dst = document.getElementById('today-timetable-grid-2');
+    const dayLabel = document.getElementById('today-day-label');
+    const dayLabel2 = document.getElementById('today-day-label-2');
+    if(src && dst) dst.innerHTML = src.innerHTML;
+    if(dayLabel && dayLabel2) dayLabel2.textContent = dayLabel.textContent;
+    dst?.querySelectorAll('.reveal').forEach(el => window.tiuaObserve?.(el));
+  };
+  document.addEventListener('DOMContentLoaded', renderTodayTimetable);
+</script>
+</body>
+</html>

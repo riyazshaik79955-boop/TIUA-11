@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sign in — TIUA</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --accent1:#7c6cf0;
+    --accent2:#28d9d0;
+    --text:#f3f2ff;
+    --muted:#c9cbe0;
+  }
+  html,body{ font-family:'Inter',sans-serif; color:var(--text); overflow-x:hidden; }
+  .font-display{ font-family:'Space Grotesk', sans-serif; }
+
+  /* ---- nature scene, built entirely from gradients + svg, no external image ---- */
+  .scene{ position:fixed; inset:0; z-index:0; }
+  .sky{
+    position:absolute; inset:0;
+    background: linear-gradient(180deg, #1a1440 0%, #5b3a63 28%, #b9645f 52%, #e8935a 68%, #f6b56a 78%, #2a2140 100%);
+  }
+  .sun{
+    position:absolute; left:50%; top:38%; width:180px; height:180px; border-radius:9999px;
+    transform: translate(-50%,-50%);
+    background: radial-gradient(circle, #fff2c8 0%, #ffce7a 40%, rgba(255,180,90,0) 72%);
+    filter: blur(1px);
+  }
+  .star{ position:absolute; width:2px; height:2px; background:white; border-radius:9999px; }
+  .mist{
+    position:absolute; left:0; right:0; bottom:0; height:55%;
+    background: linear-gradient(180deg, rgba(10,10,25,0) 0%, rgba(18,14,34,0.55) 60%, rgba(8,8,18,0.85) 100%);
+  }
+  .overlay-dark{
+    position:absolute; inset:0; background: rgba(5,6,14,0.42);
+  }
+
+  @keyframes drift{ 0%{ transform: translateX(0);} 100%{ transform: translateX(-8%);} }
+  .mist-layer{ animation: drift 40s ease-in-out infinite alternate; }
+
+  @keyframes twinkle{ 0%,100%{ opacity:.15;} 50%{ opacity:.9;} }
+
+  .glass-card{
+    background: rgba(20,18,35,0.42);
+    border:1px solid rgba(255,255,255,0.14);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    box-shadow: 0 30px 90px -20px rgba(0,0,0,0.6);
+  }
+
+  @keyframes fadeUp{ from{ opacity:0; transform: translateY(24px);} to{ opacity:1; transform: translateY(0);} }
+  .fade-up{ animation: fadeUp .9s cubic-bezier(.16,.8,.24,1) both; }
+  .fade-up-1{ animation-delay:.08s; }
+  .fade-up-2{ animation-delay:.16s; }
+  .fade-up-3{ animation-delay:.24s; }
+
+  @keyframes float{ 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-8px);} }
+  .float-card{ animation: float 7s ease-in-out infinite; }
+
+  .field{
+    background: rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.14);
+    transition: border-color .3s ease, box-shadow .3s ease, background .3s ease;
+  }
+  .field:focus-within{
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 4px rgba(40,217,208,0.15);
+    background: rgba(255,255,255,0.09);
+  }
+
+  .btn-login{
+    background: linear-gradient(120deg, var(--accent1), #4f46e5 50%, var(--accent2));
+    background-size: 200% 100%;
+    transition: background-position .5s ease, transform .25s ease, box-shadow .3s ease;
+    box-shadow: 0 12px 40px -12px rgba(124,108,240,0.6);
+  }
+  .btn-login:hover{ background-position:100% 0; transform: translateY(-2px); }
+  .btn-login:active{ transform: translateY(0); }
+  .btn-login:disabled{ opacity:.75; cursor: not-allowed; }
+
+  .ripple{ position:absolute; border-radius:9999px; background: rgba(255,255,255,0.5); transform: scale(0); animation: ripple .6s ease-out; pointer-events:none; }
+  @keyframes ripple{ to{ transform: scale(4); opacity:0; } }
+
+  .spinner{
+    width:18px; height:18px; border-radius:9999px;
+    border:2px solid rgba(255,255,255,0.35); border-top-color:white;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  .shake{ animation: shake .4s ease; }
+  @keyframes shake{ 20%,60%{ transform: translateX(-6px);} 40%,80%{ transform: translateX(6px);} }
+
+  input:-webkit-autofill{
+    -webkit-box-shadow: 0 0 0 1000px rgba(255,255,255,0.06) inset !important;
+    -webkit-text-fill-color: var(--text) !important;
+  }
+</style>
+</head>
+<body class="min-h-screen w-full relative flex items-center justify-center px-5 py-10">
+
+<div class="scene">
+  <div class="sky"></div>
+  <div class="sun"></div>
+  <div id="stars" class="absolute inset-0"></div>
+
+  <!-- mountain silhouettes -->
+  <svg class="absolute bottom-[18%] left-0 w-full" viewBox="0 0 1440 320" preserveAspectRatio="none" style="height:38%">
+    <path fill="#1b1436" opacity="0.85" d="M0,180 L180,60 L340,150 L520,20 L720,140 L900,50 L1100,160 L1260,70 L1440,150 L1440,320 L0,320 Z"/>
+  </svg>
+  <svg class="absolute bottom-[14%] left-0 w-full mist-layer" viewBox="0 0 1440 320" preserveAspectRatio="none" style="height:34%">
+    <path fill="#241a3d" opacity="0.9" d="M0,200 L220,110 L420,190 L640,90 L860,180 L1080,100 L1300,190 L1440,140 L1440,320 L0,320 Z"/>
+  </svg>
+
+  <!-- lake -->
+  <div class="absolute bottom-0 left-0 w-full" style="height:16%; background: linear-gradient(180deg, rgba(50,35,70,0.7), rgba(10,8,20,0.95));"></div>
+  <svg class="absolute bottom-0 left-0 w-full opacity-40" viewBox="0 0 1440 100" preserveAspectRatio="none" style="height:16%">
+    <path fill="#e8935a" opacity="0.25" d="M600 0 L840 0 L760 100 L680 100 Z"/>
+  </svg>
+
+  <div class="mist"></div>
+  <div class="overlay-dark"></div>
+</div>
+
+<!-- LOGIN CARD -->
+<div class="fade-up float-card relative z-10 w-full max-w-md">
+  <div class="glass-card rounded-3xl px-8 sm:px-10 py-10">
+
+    <div class="fade-up fade-up-1 text-center mb-8">
+      <p class="text-[11px] tracking-[0.35em] text-white/60 font-medium mb-2">DESIGNED &amp; DEVELOPED BY</p>
+      <p class="font-display font-semibold text-lg tracking-wide">RIYAZ</p>
+    </div>
+
+    <div class="fade-up fade-up-2 text-center mb-8">
+      <div class="w-11 h-11 mx-auto rounded-xl bg-gradient-to-br from-[var(--accent1)] to-[var(--accent2)] flex items-center justify-center font-display font-bold mb-4">T</div>
+      <h1 class="font-display font-semibold text-2xl">Welcome back</h1>
+      <p class="text-sm text-[var(--muted)] mt-1">Sign in to continue to TIUA</p>
+    </div>
+
+    <form id="loginForm" class="fade-up fade-up-3 space-y-5" novalidate>
+      <!-- username -->
+      <div>
+        <label class="block text-xs text-[var(--muted)] mb-1.5 ml-1">Username</label>
+        <div class="field rounded-xl flex items-center gap-3 px-4 py-3.5">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="text-white/50 shrink-0"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+          <input id="username" type="text" autocomplete="username" placeholder="Enter your username" class="bg-transparent outline-none w-full text-sm placeholder-white/30" />
+        </div>
+        <p id="usernameError" class="hidden text-xs text-rose-400 mt-1.5 ml-1">Please enter your username.</p>
+      </div>
+
+      <!-- password -->
+      <div>
+        <label class="block text-xs text-[var(--muted)] mb-1.5 ml-1">Password</label>
+        <div class="field rounded-xl flex items-center gap-3 px-4 py-3.5">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="text-white/50 shrink-0"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          <input id="password" type="password" autocomplete="current-password" placeholder="Enter your password" class="bg-transparent outline-none w-full text-sm placeholder-white/30" />
+          <button type="button" id="togglePwd" class="text-white/40 hover:text-white/80 transition-colors shrink-0">
+            <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <p id="passwordError" class="hidden text-xs text-rose-400 mt-1.5 ml-1">Password must be at least 4 characters.</p>
+      </div>
+
+      <div class="flex items-center justify-between text-xs text-[var(--muted)] pt-1">
+        <label class="flex items-center gap-2 cursor-pointer select-none">
+          <input type="checkbox" class="accent-[var(--accent1)] w-3.5 h-3.5" />
+          Remember me
+        </label>
+        <a href="#" class="hover:text-white transition-colors">Forgot password?</a>
+      </div>
+
+      <button id="loginBtn" type="submit" class="btn-login relative overflow-hidden w-full rounded-xl py-3.5 font-display font-medium text-sm tracking-wide flex items-center justify-center gap-2 mt-2">
+        <span id="loginBtnText">Login</span>
+      </button>
+    </form>
+
+    <p class="fade-up fade-up-3 text-center text-xs text-[var(--muted)] mt-7">
+      New to TIUA? <a href="index.html" class="text-white hover:text-[var(--accent2)] transition-colors">Back to home</a>
+    </p>
+  </div>
+</div>
+
+<script>
+  /* stars */
+  const starsWrap = document.getElementById('stars');
+  for(let i=0;i<60;i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.left = Math.random()*100 + '%';
+    s.style.top = Math.random()*45 + '%';
+    s.style.animation = `twinkle ${2+Math.random()*3}s ease-in-out infinite`;
+    s.style.animationDelay = Math.random()*3+'s';
+    starsWrap.appendChild(s);
+  }
+
+  /* password visibility toggle */
+  const pwd = document.getElementById('password');
+  const toggleBtn = document.getElementById('togglePwd');
+  const eyeIcon = document.getElementById('eyeIcon');
+  let visible = false;
+  toggleBtn.addEventListener('click', () => {
+    visible = !visible;
+    pwd.type = visible ? 'text' : 'password';
+    eyeIcon.innerHTML = visible
+      ? '<path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.4 21.4 0 0 1 5.06-6.06M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a21.5 21.5 0 0 1-2.68 3.9M1 1l22 22"/><path d="M14.12 14.12A3 3 0 1 1 9.88 9.88"/>'
+      : '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/>';
+  });
+
+  /* ripple effect on button */
+  const loginBtn = document.getElementById('loginBtn');
+  loginBtn.addEventListener('click', function(e){
+    const rect = this.getBoundingClientRect();
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+    this.appendChild(ripple);
+    setTimeout(()=>ripple.remove(), 650);
+  });
+
+  /* form validation + fake auth + navigate */
+  const form = document.getElementById('loginForm');
+  const usernameInput = document.getElementById('username');
+  const usernameError = document.getElementById('usernameError');
+  const passwordError = document.getElementById('passwordError');
+  const loginBtnText = document.getElementById('loginBtnText');
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    let valid = true;
+
+    if(usernameInput.value.trim().length === 0){
+      usernameError.classList.remove('hidden');
+      usernameInput.closest('.field').classList.add('shake');
+      valid = false;
+    } else {
+      usernameError.classList.add('hidden');
+    }
+
+    if(pwd.value.trim().length < 4){
+      passwordError.classList.remove('hidden');
+      pwd.closest('.field').classList.add('shake');
+      valid = false;
+    } else {
+      passwordError.classList.add('hidden');
+    }
+
+    setTimeout(() => {
+      usernameInput.closest('.field').classList.remove('shake');
+      pwd.closest('.field').classList.remove('shake');
+    }, 400);
+
+    if(!valid) return;
+
+    loginBtn.disabled = true;
+    loginBtnText.innerHTML = '';
+    const spinner = document.createElement('span');
+    spinner.className = 'spinner';
+    loginBtn.appendChild(spinner);
+    loginBtn.insertAdjacentHTML('beforeend', '<span class="ml-1">Signing in...</span>');
+
+    setTimeout(() => {
+      document.querySelector('.glass-card').style.transition = 'opacity .5s ease, transform .5s ease';
+      document.querySelector('.glass-card').style.opacity = '0';
+      document.querySelector('.glass-card').style.transform = 'translateY(-16px) scale(0.98)';
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 480);
+    }, 1200);
+  });
+</script>
+</body>
+</html>

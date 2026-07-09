@@ -1,0 +1,142 @@
+/* ============================================================
+   TIUA — Dashboard Styles
+   Tailwind (CDN) handles utility classes; this file covers
+   everything Tailwind's core utilities can't: custom gradients,
+   glass effects, keyframe animations, and result-tier theming.
+   ============================================================ */
+
+:root{
+  --bg:#05070d;
+  --bg-2:#0a0e1a;
+  --surface: rgba(255,255,255,0.055);
+  --surface-strong: rgba(255,255,255,0.09);
+  --border: rgba(255,255,255,0.10);
+  --text:#eef0f7;
+  --muted:#8b93ab;
+  --accent1:#7c6cf0;
+  --accent1-dim:#5b4fc4;
+  --accent2:#28d9d0;
+  --gold:#f2b544;
+  --rose:#ef6a7a;
+}
+
+html,body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  scroll-behavior:smooth;
+}
+.font-display{ font-family:'Space Grotesk', sans-serif; }
+
+::selection{ background:var(--accent1); color:white; }
+
+::-webkit-scrollbar{ width:8px; height:8px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.12); border-radius:9999px; }
+::-webkit-scrollbar-thumb:hover{ background:rgba(255,255,255,0.2); }
+
+/* ---------- glass & surfaces ---------- */
+.glass{
+  background:var(--surface);
+  border:1px solid var(--border);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+.glass:hover{ background:var(--surface-strong); }
+
+.grad-text{
+  background:linear-gradient(100deg,#ffffff 10%,var(--accent1) 55%,var(--accent2) 90%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+.glow-orb{
+  position:absolute;
+  border-radius:9999px;
+  filter:blur(90px);
+  opacity:0.35;
+  pointer-events:none;
+}
+
+@keyframes blobMove{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  33%{ transform:translate(30px,-20px) scale(1.08); }
+  66%{ transform:translate(-20px,15px) scale(0.95); }
+}
+.blob-float{ animation:blobMove 22s ease-in-out infinite; }
+.blob-float-slow{ animation:blobMove 32s ease-in-out infinite reverse; }
+
+/* ---------- reveal on scroll ---------- */
+.reveal{
+  opacity:0;
+  transform:translateY(22px);
+  transition:opacity .7s cubic-bezier(.16,.8,.24,1), transform .7s cubic-bezier(.16,.8,.24,1);
+}
+.reveal.in{ opacity:1; transform:translateY(0); }
+
+/* ---------- card hover ---------- */
+.card-hover{
+  transition:transform .4s cubic-bezier(.16,.8,.24,1), border-color .3s ease, box-shadow .4s ease;
+}
+.card-hover:hover{
+  transform:translateY(-6px);
+  border-color:rgba(124,108,240,0.4);
+  box-shadow:0 20px 55px -20px rgba(124,108,240,0.35);
+}
+
+/* ---------- buttons & ripple ---------- */
+.btn-primary{
+  background:linear-gradient(120deg,var(--accent1),#4f46e5 50%,var(--accent2));
+  background-size:200% 100%;
+  transition:background-position .55s ease, transform .25s ease, box-shadow .3s ease;
+  box-shadow:0 12px 40px -12px rgba(124,108,240,0.55);
+}
+.btn-primary:hover{ background-position:100% 0; transform:translateY(-2px); }
+
+.ripple-btn{ position:relative; overflow:hidden; }
+.btn-ripple{
+  position:absolute; border-radius:9999px; background:rgba(255,255,255,0.45);
+  transform:scale(0); animation:rippleAnim .65s ease-out; pointer-events:none;
+}
+@keyframes rippleAnim{ to{ transform:scale(4); opacity:0; } }
+
+/* ---------- sidebar ---------- */
+#sidebar{ transition: transform .35s cubic-bezier(.16,.8,.24,1); }
+.nav-link{ transition: background-color .25s ease, color .25s ease; }
+
+/* ---------- page transition overlay ---------- */
+#page-transition{
+  position:fixed; inset:0; z-index:100; background:var(--bg);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .5s ease;
+}
+#page-transition.active{ opacity:1; pointer-events:all; }
+
+/* ---------- modal ---------- */
+#resource-modal{ transition:opacity .3s ease; }
+.modal-panel{ transition:transform .35s cubic-bezier(.16,.8,.24,1), opacity .35s ease; }
+
+/* ---------- calculator result card ---------- */
+#calc-result-card{
+  border:1px solid var(--border);
+  background:linear-gradient(160deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+}
+.tier-fire{ box-shadow:0 0 0 1px rgba(242,181,68,0.4), 0 20px 60px -20px rgba(242,181,68,0.5); }
+.tier-cool{ box-shadow:0 0 0 1px rgba(40,217,208,0.4), 0 20px 60px -20px rgba(40,217,208,0.45); }
+.tier-moon{ box-shadow:0 0 0 1px rgba(124,108,240,0.4), 0 20px 60px -20px rgba(124,108,240,0.4); }
+.tier-oof{ box-shadow:0 0 0 1px rgba(239,106,122,0.4), 0 20px 60px -20px rgba(239,106,122,0.4); }
+
+@keyframes popIn{ 0%{ transform:scale(0.92); opacity:0; } 100%{ transform:scale(1); opacity:1; } }
+.pop-in{ animation:popIn .5s cubic-bezier(.16,.8,.24,1); }
+
+#calc-result-bar{ transition:width 1s cubic-bezier(.16,.8,.24,1); }
+
+/* ---------- misc floats ---------- */
+@keyframes float{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-10px);} }
+.float{ animation:float 6s ease-in-out infinite; }
+
+/* ---------- responsive niceties ---------- */
+@media (max-width: 640px){
+  #main-content{ padding-left:1rem; padding-right:1rem; }
+}
